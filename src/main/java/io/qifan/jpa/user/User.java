@@ -39,7 +39,7 @@ public class User extends BaseEntity {
   @Convert(converter = GenderTypeConverter.class)
   private GenderType gender;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
   @ToString.Exclude
   public List<Address> addresses;
 
