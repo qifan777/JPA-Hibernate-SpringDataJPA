@@ -15,5 +15,6 @@
 4. 右键 target/generated-sources/annotations选择 Mark directory as -> Generated Sources Root
 
    ![img.png](./img.png)
-5. `src/test/java/io/qifan/jpa`测试目录下有测试案例。
+5. 新建数据库`jpa_hibernate_spring`导入data.sql
+6. `src/test/java/io/qifan/jpa`测试目录下有测试案例。
     
