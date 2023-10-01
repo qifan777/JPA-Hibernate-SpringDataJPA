@@ -14,5 +14,6 @@
 3. 右侧Maven -> lifecycle -> compile
 4. 右键 target/generated-sources/annotations选择 Mark directory as -> Generated Sources Root
 
-![img.png](./img.png)
+   ![img.png](./img.png)
+5. `src/test/java/io/qifan/jpa`测试目录下有测试案例。
     
