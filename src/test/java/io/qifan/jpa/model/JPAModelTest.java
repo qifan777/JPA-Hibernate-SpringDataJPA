@@ -1,7 +1,12 @@
 package io.qifan.jpa.model;
 
 import io.qifan.jpa.address.Address;
+import io.qifan.jpa.menu.Menu;
+import io.qifan.jpa.role.Role;
+import io.qifan.jpa.role.RoleMenu;
+import io.qifan.jpa.user.GenderType;
 import io.qifan.jpa.user.User;
+import io.qifan.jpa.user.UserPhonePassword;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -17,6 +22,7 @@ import org.springframework.test.annotation.Rollback;
 // 事务在测试环境中默认会回滚
 @Rollback(value = false)
 public class JPAModelTest {
+
 
   @Autowired
   EntityManager entityManager;
@@ -87,4 +93,74 @@ public class JPAModelTest {
     addresses = user.getAddresses();
     log.info("用户地址数量：{}", addresses);
   }
+
+  @Test
+  public void oneToOneUnidirectional() {
+    User user = new User().setNickname("起凡");
+    user.setGender(GenderType.FEMALE);
+    entityManager.persist(user);
+    UserPhonePassword userPhonePassword = new UserPhonePassword();
+    // 单向关联
+    userPhonePassword.setUser(user);
+    userPhonePassword.setPhoneNumber("13676417778");
+    userPhonePassword.setPassword("123456");
+    entityManager.persist(userPhonePassword);
+  }
+
+  @Test
+  public void oneToOneBidirectional() {
+    User user = new User().setNickname("起凡2");
+    user.setGender(GenderType.FEMALE);
+
+    UserPhonePassword userPhonePassword = new UserPhonePassword();
+    userPhonePassword.setPhoneNumber("13676417718");
+    userPhonePassword.setPassword("123456");
+
+    // 双向联系，彼此依赖
+    userPhonePassword.setUser(user);
+    user.setPhonePassword(userPhonePassword);
+
+    // 由于父实体User中配置了CascadeType.ALL，在创建User时会级联创建PhonePassword。反之则不行
+    entityManager.persist(user);
+  }
+
+  /**
+   * 注意：@ManyToMany比较特殊，关系的拥有方是父实体。 为用户关联所有角色
+   */
+  @Test
+  public void manyToManySave() {
+    List<Role> roleList = entityManager.createQuery("select r from Role  r", Role.class)
+        .getResultList();
+    User user = entityManager.find(User.class, "1");
+    user.getRoles().addAll(roleList);
+    entityManager.persist(user);
+  }
+
+  /**
+   * 从用户关联的角色删除一个角色
+   */
+  @Test
+  public void manyToManyRemove() {
+    User user = entityManager.find(User.class, "1");
+    List<Role> roles = user.getRoles().stream().toList();
+    user.getRoles().remove(roles.get(0));
+    entityManager.persist(user);
+  }
+
+  @Test
+  public void manyToManyByMiddle() {
+    List<Menu> menuList = entityManager.createQuery("select m from Menu m", Menu.class)
+        .getResultList();
+    Role role = entityManager.find(Role.class, "1");
+    for (Menu menu : menuList) {
+      entityManager.persist(new RoleMenu().setMenu(menu).setRole(role));
+    }
+  }
+
+  @Test
+  public void manyToManyByMiddleQuery() {
+    Role role = entityManager.find(Role.class, "1");
+    log.info("角色：{}拥有的菜单数量：{}", role.getName(), role.getMenus().size());
+  }
+
 }

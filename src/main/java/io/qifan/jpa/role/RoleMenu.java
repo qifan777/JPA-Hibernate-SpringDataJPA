@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class RoleMenuRel extends BaseEntity {
+public class RoleMenu extends BaseEntity {
 
   @ManyToOne
   private Menu menu;

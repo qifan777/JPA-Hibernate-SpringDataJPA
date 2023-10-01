@@ -2,11 +2,10 @@ package io.qifan.jpa.role;
 
 
 import io.qifan.jpa.BaseEntity;
-import io.qifan.jpa.menu.Menu;
 import io.qifan.jpa.user.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -17,7 +16,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.ToString.Exclude;
 import lombok.experimental.Accessors;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -35,10 +33,10 @@ public class Role extends BaseEntity {
   @Size(min = 1, max = 20, message = "角色名称不能为空")
   private String name;
 
-  @OneToMany(mappedBy = "role")
-  @Exclude
-  private Set<RoleMenuRel> menus;
-  @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+  @ToString.Exclude
+  private Set<RoleMenu> menus;
+  @ManyToMany(mappedBy = "roles")
   @ToString.Exclude
   private Set<User> users;
 

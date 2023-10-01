@@ -39,13 +39,14 @@ public class User extends BaseEntity {
   @Convert(converter = GenderTypeConverter.class)
   private GenderType gender;
 
-  @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @ToString.Exclude
   public List<Address> addresses;
 
+  @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
   @ManyToMany
   @ToString.Exclude
-  @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)

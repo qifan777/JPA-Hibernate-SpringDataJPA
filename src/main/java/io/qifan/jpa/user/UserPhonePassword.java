@@ -2,20 +2,18 @@ package io.qifan.jpa.user;
 
 
 import io.qifan.jpa.BaseEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Pattern;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.proxy.HibernateProxy;
 
 
@@ -28,18 +26,16 @@ import org.hibernate.proxy.HibernateProxy;
 @RequiredArgsConstructor
 public class UserPhonePassword extends BaseEntity {
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne
+  // 将user.id映射到this.id
   @MapsId
+  // id既是主键又是外键
   @JoinColumn(name = "id")
   @ToString.Exclude
   private User user;
-  @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
-  @Column(name = "phone_number", unique = true)
+  @NaturalId
   private String phoneNumber;
-  @Column(updatable = false)
   private String password;
-
-
 
 
   @Override

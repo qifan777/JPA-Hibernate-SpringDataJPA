@@ -2,14 +2,13 @@ package io.qifan.jpa.menu;
 
 
 import io.qifan.jpa.BaseEntity;
-import io.qifan.jpa.role.RoleMenuRel;
+import io.qifan.jpa.role.RoleMenu;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
@@ -44,23 +43,16 @@ public class Menu extends BaseEntity {
   @ColumnDefault("0")
   private Integer orderNum;
 
+  // 路由路径
   private String path;
-
-  private String component;
 
   @Convert(converter = MenuTypeConverter.class)
   @Column(nullable = false)
-  @NotNull(message = "菜单类型不能为空")
   private MenuType menuType;
 
-  @Column(nullable = false)
-  @Size(min = 1, max = 255, message = "权限标识不能为空")
-  private String perms;
-
-  private String icon;
-  @OneToMany(mappedBy = "menu")
+  @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
   @Exclude
-  private List<RoleMenuRel> roles;
+  private List<RoleMenu> roles;
 
   @Override
   public final boolean equals(Object o) {
